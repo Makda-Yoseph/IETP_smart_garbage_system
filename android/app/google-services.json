@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "170622130433",
+    "project_id": "ietp-97533",
+    "storage_bucket": "ietp-97533.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170622130433:android:8cb05cb583cd679356a300",
+        "android_client_info": {
+          "package_name": "com.example.ietp_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8IR4SrO3Znj6AyusHlCGnvIhEfDjEj7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
