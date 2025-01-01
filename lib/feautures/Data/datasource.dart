@@ -13,15 +13,23 @@ class GarbageDataSource {
     try {
       final snapshot = await _database.child('garbage_data').get();
       if (snapshot.exists) {
-        // Map Firebase data into a list of GarbageDataModel
-        final data = (snapshot.value as Map<dynamic, dynamic>).map(
-          (key, value) => MapEntry(
-            key,
-            GarbageDataModel.fromJson(Map<String, dynamic>.from(value)),
-          ),
-        );
+        final garbageList = <GarbageDataModel>[];
 
-        return data.values.toList();
+        // Iterate through the top-level map
+        final data = Map<String, dynamic>.from(snapshot.value as Map);
+        data.forEach((id, uniqueKeyMap) {
+          // Extract the inner map containing the actual garbage data
+          final innerData = Map<String, dynamic>.from(uniqueKeyMap as Map);
+          innerData.forEach((uniqueKey, garbageDetails) {
+            final garbageJson = Map<String, dynamic>.from(garbageDetails);
+            garbageList.add(GarbageDataModel.fromJson({
+              ...garbageJson,
+              'id': id, // Include the `id` in the model
+            }));
+          });
+        });
+
+        return garbageList;
       } else {
         throw Exception("No garbage data found in Firebase.");
       }
@@ -35,8 +43,15 @@ class GarbageDataSource {
     try {
       final snapshot = await _database.child('garbage_data/$id').get();
       if (snapshot.exists) {
-        final json = Map<String, dynamic>.from(snapshot.value as Map);
-        return GarbageDataModel.fromJson(json);
+        // Get the first unique key's data (assuming only one unique key exists)
+        final uniqueKeyMap = Map<String, dynamic>.from(snapshot.value as Map);
+        final uniqueKeyEntry = uniqueKeyMap.entries.first;
+        final garbageJson = Map<String, dynamic>.from(uniqueKeyEntry.value);
+
+        return GarbageDataModel.fromJson({
+          ...garbageJson,
+          'id': id, // Include the `id` in the model
+        });
       } else {
         throw Exception("Garbage data with ID $id not found.");
       }
@@ -48,9 +63,20 @@ class GarbageDataSource {
   /// Updates the garbage levels for a specific garbage can
   Future<void> updateGarbageLevel(GarbageDataModel garbageCanModel) async {
     try {
-      await _database
-          .child('garbage_data/${garbageCanModel.id}')
-          .update(garbageCanModel.toJson());
+      final snapshot =
+          await _database.child('garbage_data/${garbageCanModel.id}').get();
+      if (snapshot.exists) {
+        // Get the unique key (assuming only one unique key exists)
+        final uniqueKeyMap = Map<String, dynamic>.from(snapshot.value as Map);
+        final uniqueKey = uniqueKeyMap.keys.first;
+
+        await _database
+            .child('garbage_data/${garbageCanModel.id}/$uniqueKey')
+            .update(garbageCanModel.toJson());
+      } else {
+        throw Exception(
+            "Garbage data with ID ${garbageCanModel.id} not found.");
+      }
     } catch (e) {
       throw Exception("Error updating garbage level: $e");
     }

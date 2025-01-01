@@ -37,7 +37,7 @@ class garbageDetailPage extends StatelessWidget {
               height: 50,
             ),
             ElevatedButton(
-              onPressed: ,
+              onPressed: () {},
               child: Text('Clear Garbage'),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
@@ -65,7 +65,7 @@ class garbageDetailPage extends StatelessWidget {
             ),
             SizedBox(height: 50),
             ElevatedButton(
-              onPressed: ,
+              onPressed: () {},
               child: Text('Clear Garbage'),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
